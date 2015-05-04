@@ -1,8 +1,9 @@
 <?php
-
 	include 'dblogin.php';
-
-
-	$data = R::getAll('SELECT * FROM `users`');
-	print_r($data);
+        $user = R::dispense( 'users' );
+        $user->username = "ross";
+	$user->password = "password";
+	$id = R::store( $book );
+	$user1 = R::load( 'user', $id);
+	echo $user1
 ?>

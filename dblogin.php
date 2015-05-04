@@ -7,7 +7,7 @@
  */
 include 'rb.php';
 
-R::setup('mysql:host=localhost;dbname=snapnshare',
+R::setup('mysql:host=localhost;dbname=snapNshare',
     'user','user');
 
 /*
