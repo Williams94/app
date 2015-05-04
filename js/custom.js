@@ -1,26 +1,42 @@
 $(document).ready(function(){
-	
 
-$('#submit').click(function(){
-	
-	$data = $('form').serialize();
-	console.log($data);
-	/*alert($data);
-	jQuery.ajax({
-		url: "http://localhost/hello/platforms/android/assets/www/login.php",
-		type: "POST",
-		dataType: "json",
-		data: "param=no",
-		success: function(html){
-			var DOM ="";
-			console.log(html);
-			jQuery.each(html, function(key, value){
-				DOM.html(value);
-			});
-		}, error: function(e){
+	$('#login').click(function(){
+		$name = $('#name').val();
+		$password = $('#pass').val();
 
-		}
-	});*/
-});
-	
+		$.ajax({
+			url: "login.php",
+			type: "POST",
+			data: {name:$name, password:$password, action:'login'},
+			success: function(data){
+				console.log(data);
+				if (data = 1){
+					window.location.href = "home.html";
+				} else{
+					console.log("Login unsuccessful");
+				}
+
+			}, error: function(e){
+				//console.log("Login unsuccessful");
+			}
+		});
+	});
+
+	$('#register').click(function(){
+		$name = $('#name').val();
+		$password = $('#pass').val();
+
+		$.ajax({
+			url: "login.php",
+			type: "POST",
+			data: {name:$name, password:$password, action:'register'},
+			success: function(user){
+				console.log(user);
+			}, error: function(e){
+
+			}
+		});
+	});
+
+
 });
