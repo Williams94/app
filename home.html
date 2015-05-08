@@ -14,6 +14,125 @@
     <script src="js/jquery-2.1.3.min.js"></script>
     <script src="js/home.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+    
+
+    var pictureSource;   // picture source
+    var destinationType; // sets the format of returned value
+
+    // Wait for device API libraries to load
+    //
+    document.addEventListener("deviceready",onDeviceReady,false);
+
+    // device APIs are available
+    //
+    function onDeviceReady() {
+        $('#send').hide();
+        $('#userID').hide();
+        pictureSource=navigator.camera.PictureSourceType;
+        destinationType=navigator.camera.DestinationType;
+    }
+
+    // Called when a photo is successfully retrieved
+    //
+    function onPhotoDataSuccess(imageData) {
+      // Uncomment to view the base64-encoded image data
+      // console.log(imageData);
+
+      // Get image handle
+      //
+      var smallImage = document.getElementById('smallImage');
+
+      // Unhide image elements
+      //
+      smallImage.style.display = 'block';
+
+      // Show the captured photo
+      // The in-line CSS rules are used to resize the image
+      //
+      smallImage.src = "data:image/jpeg;base64," + imageData;
+      $('#take').hide();
+      $('#send').show();
+    }
+
+    // Called when a photo is successfully retrieved
+    //
+    function onPhotoURISuccess(imageURI) {
+      // Uncomment to view the image file URI
+      // console.log(imageURI);
+
+      // Get image handle
+      //
+      var largeImage = document.getElementById('largeImage');
+
+      // Unhide image elements
+      //
+      largeImage.style.display = 'block';
+
+      // Show the captured photo
+      // The in-line CSS rules are used to resize the image
+      //
+      largeImage.src = imageURI;
+    }
+
+    function sendPhoto(){
+        //selected photo URI is in the src attribute (we set this on getPhoto)
+        var imageURI = document.getElementById('smallImage').getAttribute("src");
+        if (!imageURI) {
+            alert('Please select an image first.');
+            return;
+        }
+
+        //set upload options
+        var options = new FileUploadOptions();
+        options.fileKey = "file";
+        options.fileName = imageURI.substr(imageURI.lastIndexOf('/')+1);
+        options.mimeType = "image/jpeg";
+
+        options.params = {
+            userID: document.getElementById("userID").value
+        }
+        options.chunkedMode = false;
+
+        var ft = new FileTransfer();
+        ft.upload(imageURI, encodeURI("http://http://178.62.75.76/app/app/upload.php"), win, fail, options);
+    }
+
+     function win(r) {
+        console.log("Code = " + r.responseCode);
+        console.log("Response = " + r.response);
+        //alert("Response =" + r.response);
+        console.log("Sent = " + r.bytesSent);
+    }
+
+    function fail(error) {
+        alert("An error has occurred: Code = " + error.code);
+        console.log("upload error source " + error.source);
+        console.log("upload error target " + error.target);
+    }
+
+
+    // A button will call this function
+    //
+    function capturePhoto() {
+      // Take picture using device camera and retrieve image as base64-encoded string
+      navigator.camera.getPicture(onPhotoDataSuccess, onFail, { quality: 50,
+        destinationType: destinationType.DATA_URL });
+    }
+
+    // Called if something bad happens.
+    //
+    function onFail(message) {
+      alert('Failed because: ' + message);
+    }
+
+    function home(){
+        console.log("inbox clicked!");
+        window.location.href = "inbox.html";
+    }
+    </script>
 
 
     <title>Hello World</title>
@@ -36,9 +155,27 @@
     </div>
     <div class="row">
         <div class="col-sm-12">
-            <p id="userinfo"></p>
-            <button type="button" class="btn btn-warning btn-lg" id="send" data-loading-text="Loading...">Send</button>
-            <button type="button" class="btn btn-warning btn-lg" id="receive" data-loading-text="Loading...">Receive</button>
+        <p id="userID">1</p>
+            <p id="userinfo">Username: ross
+                            Sent: 4
+                            Received: 2</p>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <button type="button" class="btn btn-warning" onclick="capturePhoto();" id="take" data-loading-text="Loading...">Take Photo</button>
+            <button type="button" class="btn btn-warning" id="receive" onclick="home();" data-loading-text="Loading...">Receive</button>
+            <button type="button" class="btn btn-warning" onclick="sendPhoto();" id="send" data-loading-text="Loading...">Send Photo</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            
+        </div>
+        <div class="col-sm-12">
+            <img style="display:none;width:300px;height:250px;" id="smallImage" src="" />
+            <img style="display:none;" id="largeImage" src="" />
         </div>
     </div>
 
